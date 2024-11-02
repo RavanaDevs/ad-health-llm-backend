@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Title Generator</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Title Generator</h1>
+        <form id="titleForm">
+            <input type="text" id="location" placeholder="Enter your Location" required>
+            <input type="text" id="category" placeholder="Enter your Category" required>
+            <input type="text" id="price" placeholder="Enter your Price" required>
+            <input type="text" id="city" placeholder="Enter your City" required>
+            <button type="submit">Generate Titles</button>
+        </form>
+        <div id="results">
+            <h2>Generated Titles:</h2>
+            <ul id="titleList"></ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('titleForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const location = document.getElementById('location').value;
+            const category = document.getElementById('category').value;
+            const price = document.getElementById('price').value;
+            const city = document.getElementById('city').value;
+
+            fetch('/generate_titles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ location, category, price, city })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const titleList = document.getElementById('titleList');
+                titleList.innerHTML = '';
+                data.titles.forEach(title => {
+                    const li = document.createElement('li');
+                    li.textContent = title;
+                    titleList.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
